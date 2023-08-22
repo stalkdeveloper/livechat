@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\User\LoginController;
+use App\Http\Controllers\User\DashboardController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,5 +15,20 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/user/login');
 });
+
+/* User */
+Route::prefix('user')->group(function () {
+    /* For Login */
+    Route::get('login', [LoginController::class, 'indexLogin'])->name('login');
+    Route::post('check-login', [LoginController::class, 'login']);
+
+    /* For Registration */
+
+    Route::group(['middleware' => 'UserLogin'], function () {
+        Route::get('logout', [LoginController::class, 'logout']);
+        Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    });
+});
+
